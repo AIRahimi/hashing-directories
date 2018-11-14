@@ -1,21 +1,28 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class HashCheck {
 	
 	private static String option;
 	private static String filePath;
 	private static File file;
+	private static File checkSum; 
 
 	public static void main(String[] args) {
 		if (args.length == 2) {
 			option = args[0];
-			if (option.equals("-c") || option.equals("-h")) {
-				filePath = args[1];
-				file = new File(filePath);
-				scanDirectory(file);
+			filePath = args[1];
+			file = new File(filePath);
+			checkSum = new File("sum.check");
+			if (option.equals("-c") && !(checkSum.exists())) { // dersom option c og sum.check ikke eksisterer
+				
+			} else if (option.equals("-h")) {
+				//Check if existing sum.check
+				//Confirm overwrite or exit?
 			} else {
 				printError();
 			}
+			scanDirectory(file);
 		} else {
 			printError();
 		}
@@ -71,12 +78,10 @@ public class HashCheck {
 	}
 	
 	public static void checkHash(File file) {
-		//If hash.file exists 
-		
-		//Else ask user to create hash first
+		String fileHash = createHash(file);
 	}
 	
-	public static void createHash(File file) {
-		//Override existing hash file or backup
+	public static String createHash(File file) {
+		return null;
 	}
 }
