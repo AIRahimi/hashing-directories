@@ -22,7 +22,7 @@ public class HashCheck {
 	}
 	
 	public static void printError() {
-		System.err.println("Usage of HashCheck: java HashCheck [OPTIONS] [FILES/DIRECTORIES] \n"
+		System.err.println("Usage of HashCheck: java -jar HashCheck.jar [OPTION] [FILES/DIRECTORIES] \n"
 				+ "Options: \n"
 				+ "-c check. Checks given files and/or files in directories against hashes in hash file \n"
 				+ "-h hash. Scans given files and/or files in directories and saves their hashes.");
@@ -53,15 +53,30 @@ public class HashCheck {
 				if (entry.isDirectory()) {
 					scanDirectory(entry);
 				} else {
-					//Sjekk options og utfør deretter
+					doOption(entry);
 				}
 			}
 		} else {
 			filePath = directory.getParent();
-			//Sjekk options og utfør deretter
+			doOption(directory);
 		}
-		
-		
 	}
-
+	
+	public static void doOption(File entry) {
+		if (option.equals("-c")) {
+			checkHash(entry);
+		} else {
+			createHash(entry);
+		}
+	}
+	
+	public static void checkHash(File file) {
+		//If hash.file exists 
+		
+		//Else ask user to create hash first
+	}
+	
+	public static void createHash(File file) {
+		//Override existing hash file or backup
+	}
 }
