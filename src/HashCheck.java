@@ -5,12 +5,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class HashCheck {
 	
+	// https://stackoverflow.com/questions/13682983/new-line-when-using-dataoutputstream-android
+	private static final String newLine = System.getProperty("line.separator");
+		
 	private static String option;
 	private static String filePath;
 	private static File file;
@@ -39,6 +43,7 @@ public class HashCheck {
 					String overwriteInput = input.nextLine();
 					input.close();
 					if (overwriteInput.toLowerCase().equals("y")) {
+						clearCheckSum();
 						scanDirectory(file);
 					} else {
 						System.out.println("Quitting application");
@@ -91,7 +96,6 @@ public class HashCheck {
 				}
 			}
 		} else {
-			filePath = directory.getParent();
 			doOption(directory);
 		}
 	}
@@ -100,12 +104,32 @@ public class HashCheck {
 		if (option.equals("-c")) {
 			checkHashFile(entry);
 		} else {
-			writeToHashFile(entry, createHash(entry));
+			writeToHashFile(entry);
 		}
 	}
 	
 	public static void checkHashFile(File file) {
 		String fileHash = createHash(file);
+		String fileHashPath = file.getAbsolutePath();
+		try {
+			Scanner checkSumScanner = new Scanner(checkSum);
+			String tempLine = "";
+			while (checkSumScanner.hasNextLine()) {
+				tempLine = checkSumScanner.nextLine();
+				if (tempLine.contains(fileHashPath + ",")) {
+					if (tempLine.contains(fileHash)) {
+						System.out.println("Checked: " + fileHashPath + " hash OK");
+					} else {
+						System.out.println("Checked: " + fileHashPath + " hash NOT OK");
+					}
+				} else {
+					System.out.println("No hash registered for file: " + filePath);
+				}
+			}
+			checkSumScanner.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Checking hash - FileNotFound Exception: " + e.getMessage());
+		}
 	}
 	
 	public static String createHash(File file) {
@@ -114,29 +138,42 @@ public class HashCheck {
 			FileInputStream fis = new FileInputStream(file);
 			hash = DigestUtils.sha256Hex(fis);
 		} catch (FileNotFoundException e) {
-			System.err.println("FileNotFound Exception: " + e.getMessage());
+			System.err.println("Creating hash - FileNotFound Exception: " + e.getMessage());
 		} catch (IOException e) {
-			System.err.println("IO Exception: " + e.getMessage());
+			System.err.println("Creating hash - IO Exception: " + e.getMessage());
 		}
 		
 		return hash;
 	}
 	
-	public static void writeToHashFile(File filePath, String hash_sha256) {
+	public static void writeToHashFile(File fileToHash) {
+		String hash_sha256 = createHash(fileToHash);
 		try {
 			FileOutputStream fos = new FileOutputStream(checkSum, true);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			DataOutputStream dos = new DataOutputStream(bos);
-			
-			// https://stackoverflow.com/questions/13682983/new-line-when-using-dataoutputstream-android
-			String newLine = System.getProperty("line.separator");
-			
-			dos.writeBytes(filePath.getAbsolutePath() + "," + hash_sha256 + newLine);
+
+			dos.writeBytes(fileToHash.getAbsolutePath() + "," + hash_sha256 + newLine);
 			dos.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("FileNotFound Exception: " + e.getMessage());
+			System.err.println("Writing to sum.check - FileNotFound Exception: " + e.getMessage());
 		} catch (IOException e) {
-			System.err.println("IO Exception: " + e.getMessage());
+			System.err.println("Writing to sum.check - IO Exception: " + e.getMessage());
+		}
+	}
+	
+	public static void clearCheckSum() {
+		try {
+			FileOutputStream fos = new FileOutputStream(checkSum);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			DataOutputStream dos = new DataOutputStream(bos);
+			
+			dos.writeBytes("########## HASH FILE ##########" + newLine);
+			dos.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Clearing sum.check - FileNotFound Exception: " + e.getMessage());
+		} catch (IOException e) {
+			System.err.println("Clearing sum.check - IO Exception: " + e.getMessage());
 		}
 	}
 }
