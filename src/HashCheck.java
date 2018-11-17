@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class HashCheck {
 	
@@ -14,15 +15,34 @@ public class HashCheck {
 			filePath = args[1];
 			file = new File(filePath);
 			checkSum = new File("sum.check");
-			if (option.equals("-c") && !(checkSum.exists())) { // dersom option c og sum.check ikke eksisterer
-				
+			boolean checkSumExists = checkSum.exists();
+			
+			if (option.equals("-c")) {
+				if (checkSumExists) {
+					scanDirectory(file);
+				} else {
+					System.err.println("Hash file does not exist. \n"
+							+ "Try running option -h first, in order to create checksum for files");
+				}
 			} else if (option.equals("-h")) {
-				//Check if existing sum.check
-				//Confirm overwrite or exit?
+				if (checkSumExists) {
+					System.out.print("Hash file sum.check file exists from before. "
+							+ "Are you sure you want to overwrite (Y/N)? ");
+					Scanner input = new Scanner(System.in);
+					String overwriteInput = input.nextLine();
+					input.close();
+					if (overwriteInput.toLowerCase().equals("y")) {
+						scanDirectory(file);
+					} else {
+						System.out.println("Quitting application");
+						return;
+					}
+				} else {
+					scanDirectory(file);
+				}
 			} else {
 				printError();
 			}
-			scanDirectory(file);
 		} else {
 			printError();
 		}
