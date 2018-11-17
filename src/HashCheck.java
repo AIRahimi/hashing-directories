@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Scanner;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -126,17 +125,17 @@ public class HashCheck {
 					}
 				}
 			}
-			
-			if (containsFile && containsFileHash) {
-				System.out.println("Checked: " + fileHashPath + " hash OK");
-			} else if (containsFile) {
-				System.out.println("Checked: " + fileHashPath + " hash NOT OK");
-			} else {
-				System.out.println("No hash registered for file: " + filePath);
-			}
 			checkSumScanner.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("Checking hash - FileNotFound Exception: " + e.getMessage());
+		}
+		
+		if (containsFile && containsFileHash) {
+			System.out.println("Checked: " + fileHashPath + " hash OK");
+		} else if (containsFile) {
+			System.out.println("Checked: " + fileHashPath + " hash NOT OK");
+		} else {
+			System.out.println("No hash registered for file: " + fileHashPath);
 		}
 	}
 	
@@ -162,6 +161,7 @@ public class HashCheck {
 			DataOutputStream dos = new DataOutputStream(bos);
 
 			dos.writeBytes(fileToHash.getAbsolutePath() + "," + hash_sha256 + newLine);
+			System.out.println(fileToHash + " has been hashed");
 			dos.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("Writing to sum.check - FileNotFound Exception: " + e.getMessage());
