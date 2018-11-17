@@ -111,20 +111,28 @@ public class HashCheck {
 	public static void checkHashFile(File file) {
 		String fileHash = createHash(file);
 		String fileHashPath = file.getAbsolutePath();
+		String tempLine = "";
+		boolean containsFile = false;
+		boolean containsFileHash = false;
+		
 		try {
 			Scanner checkSumScanner = new Scanner(checkSum);
-			String tempLine = "";
 			while (checkSumScanner.hasNextLine()) {
 				tempLine = checkSumScanner.nextLine();
 				if (tempLine.contains(fileHashPath + ",")) {
+					containsFile = true;
 					if (tempLine.contains(fileHash)) {
-						System.out.println("Checked: " + fileHashPath + " hash OK");
-					} else {
-						System.out.println("Checked: " + fileHashPath + " hash NOT OK");
+						containsFileHash = true;
 					}
-				} else {
-					System.out.println("No hash registered for file: " + filePath);
 				}
+			}
+			
+			if (containsFile && containsFileHash) {
+				System.out.println("Checked: " + fileHashPath + " hash OK");
+			} else if (containsFile) {
+				System.out.println("Checked: " + fileHashPath + " hash NOT OK");
+			} else {
+				System.out.println("No hash registered for file: " + filePath);
 			}
 			checkSumScanner.close();
 		} catch (FileNotFoundException e) {
