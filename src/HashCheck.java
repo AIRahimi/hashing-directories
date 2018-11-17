@@ -1,5 +1,13 @@
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Scanner;
+
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class HashCheck {
 	
@@ -90,17 +98,42 @@ public class HashCheck {
 	
 	public static void doOption(File entry) {
 		if (option.equals("-c")) {
-			checkHash(entry);
+			checkHashFile(entry);
 		} else {
-			createHash(entry);
+			writeToHashFile(entry, createHash(entry));
 		}
 	}
 	
-	public static void checkHash(File file) {
+	public static void checkHashFile(File file) {
 		String fileHash = createHash(file);
 	}
 	
 	public static String createHash(File file) {
-		return null;
+		String hash = "";
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			hash = DigestUtils.sha256Hex(fis);
+		} catch (FileNotFoundException e) {
+			System.err.println("FileNotFound Exception: " + e.getMessage());
+		} catch (IOException e) {
+			System.err.println("IO Exception: " + e.getMessage());
+		}
+		
+		return hash;
+	}
+	
+	public static void writeToHashFile(File filePath, String hash_sha256) {
+		try {
+			FileOutputStream fos = new FileOutputStream(checkSum);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			DataOutputStream dos = new DataOutputStream(bos);
+			
+			dos.writeUTF(filePath.getAbsolutePath() + "," + hash_sha256 + "\r\n");
+			dos.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("FileNotFound Exception: " + e.getMessage());
+		} catch (IOException e) {
+			System.err.println("IO Exception: " + e.getMessage());
+		}
 	}
 }
