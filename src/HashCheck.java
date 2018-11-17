@@ -69,8 +69,8 @@ public class HashCheck {
 	public static void scanDirectory(File directory) { 
 		File entry;
 		
-		System.out.println("Starting search of directory " + file.getAbsolutePath());
-		
+		System.out.println("Starting search of directory " + directory.getAbsolutePath());
+			
 		if (directory.isDirectory()) {
 			filePath = directory.getAbsolutePath();
 			String[] directoryContents = directory.list();
@@ -124,11 +124,14 @@ public class HashCheck {
 	
 	public static void writeToHashFile(File filePath, String hash_sha256) {
 		try {
-			FileOutputStream fos = new FileOutputStream(checkSum);
+			FileOutputStream fos = new FileOutputStream(checkSum, true);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			DataOutputStream dos = new DataOutputStream(bos);
 			
-			dos.writeUTF(filePath.getAbsolutePath() + "," + hash_sha256 + "\r\n");
+			// https://stackoverflow.com/questions/13682983/new-line-when-using-dataoutputstream-android
+			String newLine = System.getProperty("line.separator");
+			
+			dos.writeBytes(filePath.getAbsolutePath() + "," + hash_sha256 + newLine);
 			dos.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("FileNotFound Exception: " + e.getMessage());
