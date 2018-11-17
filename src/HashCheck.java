@@ -17,7 +17,7 @@ public class HashCheck {
 	private static String option;
 	private static String filePath;
 	private static File file;
-	private static File checkSum; 
+	private static File checkSum;
 
 	public static void main(String[] args) {
 		if (args.length == 2) {
@@ -29,7 +29,11 @@ public class HashCheck {
 			
 			if (option.equals("-c")) {
 				if (checkSumExists) {
-					scanDirectory(file);
+					if (VerSig.verify()) {
+						scanDirectory(file);
+					} else {
+						System.out.println("WARNING: Signature could not be verified.");
+					}
 				} else {
 					System.err.println("Hash file does not exist. \n"
 							+ "Try running option -h first, in order to create checksum for files");
@@ -44,6 +48,8 @@ public class HashCheck {
 					if (overwriteInput.toLowerCase().equals("y")) {
 						clearCheckSum();
 						scanDirectory(file);
+						GenSig.generate();
+						System.out.println("Signature has been generated to file: sig");
 					} else {
 						System.out.println("Quitting application");
 						return;
@@ -184,4 +190,5 @@ public class HashCheck {
 			System.err.println("Clearing sum.check - IO Exception: " + e.getMessage());
 		}
 	}
+	
 }
