@@ -21,6 +21,6 @@ jar {
 	exclude ('META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA')
 }
 
-mainClassName = 'main.java.hashing_directories.HashCheck'
+mainClassName = 'no.airahimi.hashing_directories.HashCheck'
 
 
