@@ -3,22 +3,19 @@ package no.airahimi.hashing_directories;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.Desktop;
+import java.io.File;
 
 public class MainGUI extends Application {
-
-    private Desktop desktop = Desktop.getDesktop();
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -29,25 +26,57 @@ public class MainGUI extends Application {
         primaryStage.setTitle("Checksum");
 
         final FileChooser fileChooser = new FileChooser();
-        final TextField fileTextField = new TextField("Click to select file/folder for checksum");
+        final DirectoryChooser directoryChooser = new DirectoryChooser();
+        final TextField fileTextField = new TextField("Click to select file to checksum.");
         final TextField hashTextField = new TextField("Click to select checksum file.");
 
         fileTextField.setEditable(false);
-        fileTextField.setMinWidth(279);
-        fileTextField.setMaxWidth(279);
+        fileTextField.setMinWidth(558);
+        fileTextField.setMaxWidth(558);
         hashTextField.setEditable(false);
-        hashTextField.setMinWidth(279);
-        hashTextField.setMaxWidth(279);
+        hashTextField.setMinWidth(558);
+        hashTextField.setMaxWidth(558);
 
-        final ToggleGroup toggleGroup = new ToggleGroup();
-        ToggleButton hashButton = new ToggleButton("HASH");
-        ToggleButton checkButton = new ToggleButton("CHECK");
 
-        hashButton.setMinWidth(53);
-        checkButton.setMinWidth(53);
-        hashButton.setToggleGroup(toggleGroup);
-        checkButton.setToggleGroup(toggleGroup);
+        final ToggleGroup fileGroup = new ToggleGroup();
+        final ToggleButton fileButton = new ToggleButton("FILE");
+        final ToggleButton folderButton = new ToggleButton("FOLDER");
+        final ToggleGroup functionGroup = new ToggleGroup();
+        final ToggleButton hashButton = new ToggleButton("HASH");
+        final ToggleButton checkButton = new ToggleButton("CHECK");
+
+        fileButton.setMinWidth(59);
+        folderButton.setMinWidth(59);
+        fileButton.setToggleGroup(fileGroup);
+        folderButton.setToggleGroup(fileGroup);
+        fileButton.setSelected(true);
+        hashButton.setMinWidth(59);
+        checkButton.setMinWidth(59);
+        hashButton.setToggleGroup(functionGroup);
+        checkButton.setToggleGroup(functionGroup);
         hashButton.setSelected(true);
+
+
+        fileTextField.setOnMouseClicked(
+                e-> {
+                    if (fileButton.isSelected()) {
+                        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                        fileChooser.setTitle("Select file to check or hash");
+                        File file = fileChooser.showOpenDialog(primaryStage);
+                        if (file != null) {
+                            fileTextField.setText(file.getAbsolutePath());
+                        }
+                    } else if (folderButton.isSelected()) {
+                        directoryChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                        directoryChooser.setTitle("Select folder to check or hash");
+                        File file = directoryChooser.showDialog(primaryStage);
+                        if (file != null && file.isDirectory()) {
+                            fileTextField.setText(file.getAbsolutePath());
+                        }
+                    }
+
+                }
+        );
 
         hashButton.setOnAction(
                 e-> {
@@ -62,31 +91,30 @@ public class MainGUI extends Application {
                 }
         );
 
-        fileTextField.setOnMouseClicked(
+        hashTextField.setOnMouseClicked(
                 e-> {
-                    fileTextField.setText("You clicked me!");
-                    System.out.println("You clicked file text field");
-                    System.out.println(fileTextField.getWidth());
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                    fileChooser.setTitle("Select hash file");
+                    File file = fileChooser.showOpenDialog(primaryStage);
+                    if (file != null) {
+                        hashTextField.setText(file.getAbsolutePath());
+                    }
                 }
         );
 
-        hashTextField.setOnMouseClicked(
-                e-> {
-                    hashTextField.setText("You clicked me!");
-                    System.out.println("You clicked hash text field");
-                    System.out.println(hashTextField.getWidth());
-                }
-        );
 
 
         final GridPane inputGridPane = new GridPane();
-        GridPane.setConstraints(hashButton, 0, 0);
-        GridPane.setConstraints(checkButton, 1, 0);
+        GridPane.setConstraints(fileButton, 0, 0);
+        GridPane.setConstraints(folderButton, 1, 0);
         GridPane.setConstraints(fileTextField, 2, 0);
-        GridPane.setConstraints(hashTextField, 3, 0);
+        GridPane.setConstraints(hashButton, 0, 1);
+        GridPane.setConstraints(checkButton, 1, 1);
+        GridPane.setConstraints(hashTextField, 2, 1);
 
-        inputGridPane.getChildren().addAll(hashButton, checkButton, fileTextField, hashTextField);
+        inputGridPane.getChildren().addAll(fileButton, folderButton, fileTextField, hashButton, checkButton, hashTextField);
         inputGridPane.setHgap(10);
+        inputGridPane.setVgap(10);
 
         final Pane rootGroup = new VBox(12);
         rootGroup.getChildren().addAll(inputGridPane);
@@ -95,9 +123,6 @@ public class MainGUI extends Application {
         primaryStage.setScene(new Scene(rootGroup, 720, 445));
         primaryStage.setResizable(false);
         primaryStage.show();
-
-        System.out.println(hashButton.getWidth());
-        System.out.println(checkButton.getWidth());
-        System.out.println(fileTextField.getWidth());
     }
+
 }
