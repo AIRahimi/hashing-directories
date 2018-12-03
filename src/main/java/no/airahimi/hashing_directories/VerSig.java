@@ -1,4 +1,5 @@
 package no.airahimi.hashing_directories;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.security.KeyStore;

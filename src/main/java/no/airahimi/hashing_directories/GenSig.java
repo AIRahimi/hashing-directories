@@ -1,4 +1,5 @@
 package no.airahimi.hashing_directories;
+
 import java.io.*;
 import java.security.*;
 

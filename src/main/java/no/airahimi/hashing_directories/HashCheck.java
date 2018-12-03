@@ -1,4 +1,5 @@
 package no.airahimi.hashing_directories;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -74,7 +75,7 @@ public class HashCheck {
 	}
 	
 	/**
-	 * Løst ved hjelp av:
+	 * Lï¿½st ved hjelp av:
 	 * http://kark.hin.no/opsys/tanenbaum/java/ExecutableFiles.java
 	 */
 	public static void scanDirectory(File directory) { 
