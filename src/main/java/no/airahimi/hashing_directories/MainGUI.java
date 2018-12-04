@@ -3,7 +3,7 @@ package no.airahimi.hashing_directories;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -61,6 +61,9 @@ public class MainGUI extends Application {
         checkButton.setMinWidth(60);
         hashButton.setToggleGroup(functionGroup);
         checkButton.setToggleGroup(functionGroup);
+
+        final TextArea textArea = new TextArea(" hey");
+
 
         fileButton.setOnAction(
                 e-> {
@@ -126,7 +129,8 @@ public class MainGUI extends Application {
         GridPane.setConstraints(checkButton, 1, 1);
         GridPane.setConstraints(hashTextField, 2, 1);
 
-        inputGridPane.getChildren().addAll(fileButton, folderButton, fileTextField, hashButton, checkButton, hashTextField);
+        inputGridPane.getChildren().addAll(fileButton, folderButton, fileTextField,
+                hashButton, checkButton, hashTextField);
         inputGridPane.setHgap(10);
         inputGridPane.setVgap(10);
 
@@ -134,7 +138,7 @@ public class MainGUI extends Application {
         Scene scene = new Scene(rootGroup, 720, 445);
         rootGroup.prefHeightProperty().bind(scene.heightProperty());
         rootGroup.prefWidthProperty().bind(scene.widthProperty());
-        rootGroup.getChildren().addAll(inputGridPane);
+        rootGroup.getChildren().addAll(inputGridPane, textArea);
         rootGroup.setPadding(new Insets(12, 12, 12 , 12));
 
 
@@ -152,10 +156,7 @@ public class MainGUI extends Application {
                 }
         );
 
-        primaryStage.heightProperty().addListener(
-                (obs, oldVal, newVal) ->
-                    inputGridPane.prefHeightProperty().setValue(primaryStage.getHeight())
-        );
+
 
         File file = new File("src/main/resources/Main.css");
         scene.getStylesheets().add("file:///" + file.getAbsolutePath().replace("\\", "/"));
