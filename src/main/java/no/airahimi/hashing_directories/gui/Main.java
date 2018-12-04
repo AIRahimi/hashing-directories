@@ -3,15 +3,10 @@ package no.airahimi.hashing_directories.gui;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -30,8 +25,8 @@ public class Main extends Application {
 
         final FileChooser fileChooser = new FileChooser();
         final DirectoryChooser directoryChooser = new DirectoryChooser();
-        final TextField fileTextField = new TextField("No files or folder selected at the moment.");
-        final TextField hashTextField = new TextField("No check-file or hash-file selected at the moment.");
+        final TextField fileTextField = new TextField("No file/folder selected.");
+        final TextField hashTextField = new TextField("No file selected at the moment.");
 
         fileTextField.setEditable(false);
         hashTextField.setEditable(false);
@@ -118,7 +113,6 @@ public class Main extends Application {
         );
 
 
-
         final GridPane inputGridPane = new GridPane();
         GridPane.setConstraints(fileButton, 0, 0);
         GridPane.setConstraints(folderButton, 1, 0);
@@ -134,34 +128,72 @@ public class Main extends Application {
 
         final Pane rootGroup = new VBox(12);
         Scene scene = new Scene(rootGroup, 720, 445);
-        rootGroup.prefHeightProperty().bind(scene.heightProperty());
-        rootGroup.prefWidthProperty().bind(scene.widthProperty());
         rootGroup.getChildren().addAll(inputGridPane, textArea);
         rootGroup.setPadding(new Insets(12, 12, 12 , 12));
 
 
-        primaryStage.widthProperty().addListener(
+        final ImageView resetView = new ImageView(new Image("file:src/main/resources/reseticon.png"));
+        final ImageView playView = new ImageView(new Image("file:src/main/resources/playicon.png"));
+        final ImageView saveView = new ImageView(new Image("file:src/main/resources/saveicon.png"));
+
+        resetView.setPreserveRatio(true);
+        playView.setPreserveRatio(true);
+        saveView.setPreserveRatio(true);
+
+        final Button resetButton = new Button();
+        final Button playButton = new Button();
+        final Button saveButton = new Button();
+
+        resetButton.setGraphic(resetView);
+        playButton.setGraphic(playView);
+        saveButton.setGraphic(saveView);
+        resetButton.setMinWidth(60);
+        playButton.setMinWidth(60);
+        saveButton.setMinWidth(60);
+        final HBox hBox = new HBox();
+        hBox.setSpacing(12);
+        hBox.getChildren().addAll(resetButton, playButton, saveButton);
+        rootGroup.getChildren().addAll(hBox);
+
+
+        //Width-Responsivity
+        //inputGridPane.prefWidthProperty().setValue(primaryStage.getWidth());
+
+        fileView.fitWidthProperty().bindBidirectional(fileButton.minWidthProperty());
+        folderView.fitWidthProperty().bindBidirectional(folderButton.minWidthProperty());
+
+        fileButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        folderButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
+
+        hashButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
+
+
+        resetView.fitWidthProperty().bindBidirectional(resetButton.minWidthProperty());
+        playView.fitWidthProperty().bindBidirectional(playButton.minWidthProperty());
+        saveView.fitWidthProperty().bindBidirectional(saveButton.minWidthProperty());
+
+        resetButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3));
+        playButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3));
+        saveButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3));
+
+        // Height-Responsivity
+        textArea.prefHeightProperty().bind(
+                scene.heightProperty().subtract(inputGridPane.getHeight()));
+
+
+        scene.widthProperty().addListener(
                 (obs, oldVal, newVal) -> {
-                    inputGridPane.prefWidthProperty().setValue(primaryStage.getWidth());
-
-                    fileButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-                    folderButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-                    fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3).multiply(2));
-
-                    hashButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-                    checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-                    fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3).multiply(2));
-
-                    fileView.fitWidthProperty().bindBidirectional(fileButton.minWidthProperty());
-                    folderView.fitWidthProperty().bindBidirectional(folderButton.minWidthProperty());
                 }
         );
-        primaryStage.heightProperty().addListener(
-                (obs, oldVal, newVal) -> textArea.prefHeightProperty().bind(
-                        primaryStage.heightProperty().subtract(inputGridPane.getHeight()))
+
+        scene.heightProperty().addListener(
+                (obs, oldVal, newVal) -> {
+
+        }
         );
-
-
 
         File file = new File("src/main/resources/Main.css");
         scene.getStylesheets().add("file:///" + file.getAbsolutePath().replace("\\", "/"));
