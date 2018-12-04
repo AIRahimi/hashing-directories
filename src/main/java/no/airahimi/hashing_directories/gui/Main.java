@@ -27,7 +27,7 @@ public class Main extends Application {
         initUI(rootGroup);
         rootGroup.setPadding(new Insets(12, 12, 12 , 12));
 
-        Scene scene = new Scene(rootGroup, 720, 445);
+        Scene scene = new Scene(rootGroup);
 
 
         scene.widthProperty().addListener(
@@ -45,8 +45,6 @@ public class Main extends Application {
         scene.getStylesheets().add("file:///" + file.getAbsolutePath().replace("\\", "/"));
 
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(460);
-        primaryStage.setMinHeight(350);
         primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(1.5));
         primaryStage.minHeightProperty().bind(scene.widthProperty().divide(1.5));
         primaryStage.show();
@@ -70,29 +68,37 @@ public class Main extends Application {
         fileTextField.setEditable(false);
         hashTextField.setEditable(false);
 
-        final ToggleGroup fileGroup = new ToggleGroup();
-        final ToggleGroup functionGroup = new ToggleGroup();
+
+        final ImageView fileView = new ImageView(new Image("file:src/main/resources/fileicon.png"));
+        final ImageView folderView = new ImageView(new Image("file:src/main/resources/foldericon.png"));
+
+        fileView.setPreserveRatio(true);
+        folderView.setPreserveRatio(true);
+        fileView.setSmooth(true);
+        folderView.setSmooth(true);
+        fileView.setCache(true);
+        folderView.setCache(true);
+
 
         final ToggleButton fileButton = new ToggleButton();
         final ToggleButton folderButton = new ToggleButton();
         final ToggleButton hashButton = new ToggleButton("HASH");
         final ToggleButton checkButton = new ToggleButton("CHECK");
 
+        fileButton.setGraphic(fileView);
+        folderButton.setGraphic(folderView);
+
         hashButton.setMinWidth(60);
         checkButton.setMinWidth(60);
+        fileButton.setMinWidth(60);
+        folderButton.setMinWidth(60);
+
+        final ToggleGroup fileGroup = new ToggleGroup();
+        final ToggleGroup functionGroup = new ToggleGroup();
+
         hashButton.setToggleGroup(functionGroup);
         checkButton.setToggleGroup(functionGroup);
-
-        final ImageView fileView = new ImageView(new Image("file:src/main/resources/fileicon.png"));
-        final ImageView folderView = new ImageView(new Image("file:src/main/resources/foldericon.png"));
-
-        fileView.setPreserveRatio(true);
-        fileButton.setGraphic(fileView);
-        fileButton.setMinWidth(60);
         fileButton.setToggleGroup(fileGroup);
-        folderView.setPreserveRatio(true);
-        folderButton.setGraphic(folderView);
-        folderButton.setMinWidth(60);
         folderButton.setToggleGroup(fileGroup);
 
 
@@ -167,7 +173,8 @@ public class Main extends Application {
         inputGridPane.setHgap(10);
         inputGridPane.setVgap(10);
 
-
+        /**
+         *
         //Width-Responsivity
         //inputGridPane.prefWidthProperty().setValue(primaryStage.getWidth());
 
@@ -182,7 +189,7 @@ public class Main extends Application {
         checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
         fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
 
-        /*
+
 
         resetView.fitWidthProperty().bindBidirectional(resetButton.minWidthProperty());
         playView.fitWidthProperty().bindBidirectional(playButton.minWidthProperty());
@@ -210,8 +217,7 @@ public class Main extends Application {
     }
 
     private HBox initHBox() {
-        HBox hBox = new HBox();
-
+        HBox hBox = new HBox(12);
         final ImageView resetView = new ImageView(new Image("file:src/main/resources/reseticon.png"));
         final ImageView playView = new ImageView(new Image("file:src/main/resources/playicon.png"));
         final ImageView saveView = new ImageView(new Image("file:src/main/resources/saveicon.png"));
@@ -230,8 +236,16 @@ public class Main extends Application {
         resetButton.setMinWidth(60);
         playButton.setMinWidth(60);
         saveButton.setMinWidth(60);
-        hBox.setSpacing(12);
+        resetButton.setMaxWidth(Double.MAX_VALUE);
+        playButton.setMaxWidth(Double.MAX_VALUE);
+        saveButton.setMaxWidth(Double.MAX_VALUE);
+
+        HBox.setHgrow(resetButton, Priority.ALWAYS);
+        HBox.setHgrow(playButton, Priority.ALWAYS);
+        HBox.setHgrow(saveButton, Priority.ALWAYS);
+
         hBox.getChildren().addAll(resetButton, playButton, saveButton);
+        System.out.println(hBox);
 
         return hBox;
     }
