@@ -24,5 +24,6 @@ atlassian-ide-plugin.xml
 .metadata/
 
 ### IDEA ###
-/.idea
+/.idea/
+/out/
 *.iml

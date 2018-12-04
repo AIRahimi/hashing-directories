@@ -1,4 +1,4 @@
-package no.airahimi.hashing_directories;
+package no.airahimi.hashing_directories.gui;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class MainGUI extends Application {
+public class Main extends Application {
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -39,23 +39,20 @@ public class MainGUI extends Application {
         final ToggleGroup fileGroup = new ToggleGroup();
         final ToggleButton fileButton = new ToggleButton();
         final ImageView fileView = new ImageView(new Image("file:src/main/resources/fileicon.png"));
-        fileView.fitWidthProperty().bindBidirectional(fileButton.minWidthProperty());
         fileView.setPreserveRatio(true);
         fileButton.setGraphic(fileView);
+        fileButton.setMinWidth(60);
+        fileButton.setToggleGroup(fileGroup);
 
         final ToggleButton folderButton = new ToggleButton();
         final ImageView folderView = new ImageView(new Image("file:src/main/resources/foldericon.png"));
-        folderView.fitWidthProperty().bindBidirectional(folderButton.minWidthProperty());
         folderView.setPreserveRatio(true);
         folderButton.setGraphic(folderView);
+        folderButton.setMinWidth(60);
+        folderButton.setToggleGroup(fileGroup);
 
         final ToggleGroup functionGroup = new ToggleGroup();
-
         final ToggleButton hashButton = new ToggleButton("HASH");
-        fileButton.setMinWidth(60);
-        folderButton.setMinWidth(60);
-        fileButton.setToggleGroup(fileGroup);
-        folderButton.setToggleGroup(fileGroup);
         final ToggleButton checkButton = new ToggleButton("CHECK");
         hashButton.setMinWidth(60);
         checkButton.setMinWidth(60);
@@ -86,26 +83,27 @@ public class MainGUI extends Application {
                 }
         );
 
+        checkButton.setOnAction(
+                e-> {
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                    fileChooser.setTitle("Select hash file to scan for changes");
+                    File file = fileChooser.showOpenDialog(primaryStage);
+
+                    if (file != null)
+                        hashTextField.setText(file.getAbsolutePath());
+                }
+
+        );
+
         hashButton.setOnAction(
             e-> {
                 fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-                fileChooser.setTitle("Select hash file to scan for changes");
+                fileChooser.setTitle("Select file to write hashes to");
                 File file = fileChooser.showOpenDialog(primaryStage);
 
                 if (file != null)
                     hashTextField.setText(file.getAbsolutePath());
             }
-        );
-        checkButton.setOnAction(
-            e-> {
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-                fileChooser.setTitle("Select hash file");
-                File file = fileChooser.showSaveDialog(primaryStage);
-
-                if (file != null)
-                    hashTextField.setText(file.getAbsolutePath());
-            }
-
         );
 
         hashTextField.setOnMouseClicked(
@@ -153,7 +151,14 @@ public class MainGUI extends Application {
                     hashButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
                     checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
                     fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3).multiply(2));
+
+                    fileView.fitWidthProperty().bindBidirectional(fileButton.minWidthProperty());
+                    folderView.fitWidthProperty().bindBidirectional(folderButton.minWidthProperty());
                 }
+        );
+        primaryStage.heightProperty().addListener(
+                (obs, oldVal, newVal) -> textArea.prefHeightProperty().bind(
+                        primaryStage.heightProperty().subtract(inputGridPane.getHeight()))
         );
 
 
