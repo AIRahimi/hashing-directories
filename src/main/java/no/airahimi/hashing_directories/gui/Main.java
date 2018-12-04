@@ -99,7 +99,7 @@ public class Main extends Application {
             e-> {
                 fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
                 fileChooser.setTitle("Select file to write hashes to");
-                File file = fileChooser.showOpenDialog(primaryStage);
+                File file = fileChooser.showSaveDialog(primaryStage);
 
                 if (file != null)
                     hashTextField.setText(file.getAbsolutePath());
