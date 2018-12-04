@@ -31,7 +31,7 @@ public class MainGUI extends Application {
         final FileChooser fileChooser = new FileChooser();
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         final TextField fileTextField = new TextField("No files or folder selected at the moment.");
-        final TextField hashTextField = new TextField("Click to select checksum file.");
+        final TextField hashTextField = new TextField("No check-file or hash-file selected at the moment.");
 
         fileTextField.setEditable(false);
         hashTextField.setEditable(false);
@@ -52,17 +52,15 @@ public class MainGUI extends Application {
         final ToggleGroup functionGroup = new ToggleGroup();
 
         final ToggleButton hashButton = new ToggleButton("HASH");
-        fileButton.setMinWidth(59);
-        folderButton.setMinWidth(59);
+        fileButton.setMinWidth(60);
+        folderButton.setMinWidth(60);
         fileButton.setToggleGroup(fileGroup);
         folderButton.setToggleGroup(fileGroup);
-        fileButton.setSelected(true);
         final ToggleButton checkButton = new ToggleButton("CHECK");
-        hashButton.setMinWidth(59);
-        checkButton.setMinWidth(59);
+        hashButton.setMinWidth(60);
+        checkButton.setMinWidth(60);
         hashButton.setToggleGroup(functionGroup);
         checkButton.setToggleGroup(functionGroup);
-        hashButton.setSelected(true);
 
         fileButton.setOnAction(
                 e-> {
@@ -87,15 +85,24 @@ public class MainGUI extends Application {
 
         hashButton.setOnAction(
             e-> {
-                fileTextField.setText("You clicked hashButton!");
-                System.out.println("You clicked hashbutton");
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                fileChooser.setTitle("Select hash file to scan for changes");
+                File file = fileChooser.showOpenDialog(primaryStage);
+
+                if (file != null)
+                    hashTextField.setText(file.getAbsolutePath());
             }
         );
         checkButton.setOnAction(
             e-> {
-                fileTextField.setText("You clicked checkButton!");
-                System.out.println("You clicked checkbutton");
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                fileChooser.setTitle("Select hash file");
+                File file = fileChooser.showSaveDialog(primaryStage);
+
+                if (file != null)
+                    hashTextField.setText(file.getAbsolutePath());
             }
+
         );
 
         hashTextField.setOnMouseClicked(
@@ -103,9 +110,9 @@ public class MainGUI extends Application {
                 fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
                 fileChooser.setTitle("Select hash file");
                 File file = fileChooser.showOpenDialog(primaryStage);
-                if (file != null) {
+
+                if (file != null)
                     hashTextField.setText(file.getAbsolutePath());
-                }
             }
         );
 
@@ -142,16 +149,16 @@ public class MainGUI extends Application {
                     hashButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
                     checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
                     fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3).multiply(2));
-
                 }
         );
 
         primaryStage.heightProperty().addListener(
-                (obs, oldVal, newVal) -> {
-                    inputGridPane.prefHeightProperty().setValue(primaryStage.getHeight());
-                }
+                (obs, oldVal, newVal) ->
+                    inputGridPane.prefHeightProperty().setValue(primaryStage.getHeight())
         );
 
+        File file = new File("src/main/resources/Main.css");
+        scene.getStylesheets().add("file:///" + file.getAbsolutePath().replace("\\", "/"));
 
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(460);
