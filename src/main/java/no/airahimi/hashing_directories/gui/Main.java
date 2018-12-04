@@ -23,9 +23,10 @@ public class Main extends Application {
     public void start(final Stage primaryStage) {
         primaryStage.setTitle("Checksum");
 
-        final Pane rootGroup = new VBox(12);
+        final VBox rootGroup = new VBox(12);
         initUI(rootGroup);
         rootGroup.setPadding(new Insets(12, 12, 12 , 12));
+        rootGroup.setMinSize(720, 445);
 
         Scene scene = new Scene(rootGroup);
 
@@ -38,16 +39,17 @@ public class Main extends Application {
         scene.heightProperty().addListener(
                 (obs, oldVal, newVal) -> {
 
-        }
+                }
         );
 
         File file = new File("src/main/resources/Main.css");
         scene.getStylesheets().add("file:///" + file.getAbsolutePath().replace("\\", "/"));
 
         primaryStage.setScene(scene);
-        primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(1.5));
-        primaryStage.minHeightProperty().bind(scene.widthProperty().divide(1.5));
+        primaryStage.setMinHeight(445.0);
+        primaryStage.setMinWidth(720.0);
         primaryStage.show();
+
     }
 
     private void initUI(Pane root) {
@@ -59,6 +61,10 @@ public class Main extends Application {
     }
 
     private GridPane initGridPane() {
+        final GridPane inputGridPane = new GridPane();
+        inputGridPane.setHgap(10);
+        inputGridPane.setVgap(10);
+
         final FileChooser fileChooser = new FileChooser();
         final DirectoryChooser directoryChooser = new DirectoryChooser();
 
@@ -85,6 +91,9 @@ public class Main extends Application {
         final ToggleButton hashButton = new ToggleButton("HASH");
         final ToggleButton checkButton = new ToggleButton("CHECK");
 
+        fileView.fitWidthProperty().bindBidirectional(fileButton.minWidthProperty());
+        folderView.fitWidthProperty().bindBidirectional(folderButton.minWidthProperty());
+
         fileButton.setGraphic(fileView);
         folderButton.setGraphic(folderView);
 
@@ -100,6 +109,14 @@ public class Main extends Application {
         checkButton.setToggleGroup(functionGroup);
         fileButton.setToggleGroup(fileGroup);
         folderButton.setToggleGroup(fileGroup);
+
+        fileButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        folderButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
+
+        hashButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
+        fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
 
 
 
@@ -160,7 +177,7 @@ public class Main extends Application {
         );
         */
 
-        final GridPane inputGridPane = new GridPane();
+
         GridPane.setConstraints(fileButton, 0, 0);
         GridPane.setConstraints(folderButton, 1, 0);
         GridPane.setConstraints(fileTextField, 2, 0);
@@ -170,34 +187,6 @@ public class Main extends Application {
 
         inputGridPane.getChildren().addAll(fileButton, folderButton, fileTextField,
                 hashButton, checkButton, hashTextField);
-        inputGridPane.setHgap(10);
-        inputGridPane.setVgap(10);
-
-        /**
-         *
-        //Width-Responsivity
-        //inputGridPane.prefWidthProperty().setValue(primaryStage.getWidth());
-
-        fileView.fitWidthProperty().bindBidirectional(fileButton.minWidthProperty());
-        folderView.fitWidthProperty().bindBidirectional(folderButton.minWidthProperty());
-
-        fileButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-        folderButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-        fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
-
-        hashButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-        checkButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6));
-        fileTextField.prefWidthProperty().bind(inputGridPane.widthProperty().divide(6).multiply(4));
-
-
-
-        resetView.fitWidthProperty().bindBidirectional(resetButton.minWidthProperty());
-        playView.fitWidthProperty().bindBidirectional(playButton.minWidthProperty());
-        saveView.fitWidthProperty().bindBidirectional(saveButton.minWidthProperty());
-
-        resetButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3));
-        playButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3));
-        saveButton.prefWidthProperty().bind(inputGridPane.widthProperty().divide(3));*/
 
         return inputGridPane;
     }
@@ -206,12 +195,7 @@ public class Main extends Application {
 
         TextArea textArea = new TextArea(" hey");
         textArea.setEditable(false);
-
-        /**
-         // Height-Responsivity
-         textArea.prefHeightProperty().bind(
-         scene.heightProperty().subtract(inputGridPane.getHeight()));*/
-
+        VBox.setVgrow(textArea, Priority.ALWAYS);
         return textArea;
 
     }
@@ -225,10 +209,18 @@ public class Main extends Application {
         resetView.setPreserveRatio(true);
         playView.setPreserveRatio(true);
         saveView.setPreserveRatio(true);
+        resetView.setSmooth(true);
+        playView.setSmooth(true);
+        saveView.setSmooth(true);
+        playView.setSmooth(true);
 
         final Button resetButton = new Button();
         final Button playButton = new Button();
         final Button saveButton = new Button();
+
+        resetView.fitWidthProperty().bindBidirectional(resetButton.minWidthProperty());
+        playView.fitWidthProperty().bindBidirectional(playButton.minWidthProperty());
+        saveView.fitWidthProperty().bindBidirectional(saveButton.minWidthProperty());
 
         resetButton.setGraphic(resetView);
         playButton.setGraphic(playView);
@@ -245,7 +237,6 @@ public class Main extends Application {
         HBox.setHgrow(saveButton, Priority.ALWAYS);
 
         hBox.getChildren().addAll(resetButton, playButton, saveButton);
-        System.out.println(hBox);
 
         return hBox;
     }
