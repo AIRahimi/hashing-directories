@@ -16,11 +16,11 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'no.airahimi.hashing_directories.HashCheck'
+        attributes 'Main-Class': 'no.airahimi.hashing_directories.gui.Main'
     }			
 	exclude ('META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA')
 }
 
-mainClassName = 'no.airahimi.hashing_directories.MainGUI'
+mainClassName = 'no.airahimi.hashing_directories.gui.Main'
 
 
