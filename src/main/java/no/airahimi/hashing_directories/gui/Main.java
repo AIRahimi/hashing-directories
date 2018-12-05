@@ -10,15 +10,20 @@ import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import no.airahimi.hashing_directories.Hash;
 import no.airahimi.hashing_directories.HashCheck;
 
-import java.io.File;
+import java.io.*;
 
 public class Main extends Application {
+
+    public static final String NEW_LINE = System.getProperty("line.separator");
 
     public static void main(String[] args) {
         Application.launch(args);
     }
+
+    private FileChooser fileChooser;
 
     private TextField fileTextField;
     private TextField hashTextField;
@@ -29,7 +34,6 @@ public class Main extends Application {
     private ToggleButton checkButton;
 
     private TextArea textArea;
-
 
     @Override
     public void start(final Stage primaryStage) {
@@ -66,7 +70,7 @@ public class Main extends Application {
         inputGridPane.setHgap(10);
         inputGridPane.setVgap(10);
 
-        final FileChooser fileChooser = new FileChooser();
+        fileChooser = new FileChooser();
         final DirectoryChooser directoryChooser = new DirectoryChooser();
 
         fileTextField = new TextField("No file/folder selected.");
@@ -180,8 +184,7 @@ public class Main extends Application {
     }
 
     private TextArea initTextArea(Stage stage) {
-        String readme = "Hey \nThis is the readme \nye  \n lol \\ lol";
-        textArea = new TextArea(readme);
+        textArea = new TextArea(readme());
         textArea.setEditable(false);
         VBox.setVgrow(textArea, Priority.ALWAYS);
         return textArea;
@@ -240,7 +243,10 @@ public class Main extends Application {
                 e -> {
                     if ((fileButton.isSelected() || folderButton.isSelected()) &&
                             (hashButton.isSelected() || checkButton.isSelected())) {
-                        HashCheck hashCheck = new HashCheck();
+                        Hash hash = new Hash(new File(fileTextField.getText()), new File(hashTextField.getText()));
+                        hash.scanDirectory();
+
+                        textArea.setText(hash.getOutputString());
                     } else {
                         textArea.appendText("\n\nError:");
                     }
@@ -251,19 +257,44 @@ public class Main extends Application {
                     if (!hashButton.isSelected() && !checkButton.isSelected())
                         textArea.appendText("\nPlease select a file to check hashes or a file to save hash output to.");
 
-
                 }
         );
 
         saveButton.setOnAction(
                 e -> {
+                    FileChooser fileChooser = new FileChooser();
+                    FileChooser.ExtensionFilter extFilter =
+                            new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+                    fileChooser.getExtensionFilters().add(extFilter);
 
+                    fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                    fileChooser.setTitle("Select file to save output to");
+                    File file = fileChooser.showSaveDialog(stage);
+
+                    if (file != null) {
+                        try {
+                            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+                            bufferedWriter.write(textArea.getText());
+                            bufferedWriter.close();
+                        } catch (IOException ex) {
+                            System.err.println(ex.toString());
+                        }
+                    }
                 }
         );
 
         hBox.getChildren().addAll(resetButton, playButton, saveButton);
 
         return hBox;
+    }
+
+    private String readme() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Manual - Checksum").append(NEW_LINE);
+        sb.append("This is the readme").append(NEW_LINE);
+        sb.append("ye").append(NEW_LINE);
+        sb.append("lol lol");
+        return sb.toString();
     }
 
 }
