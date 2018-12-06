@@ -10,8 +10,8 @@ import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import no.airahimi.hashing_directories.Check;
 import no.airahimi.hashing_directories.Hash;
-import no.airahimi.hashing_directories.HashCheck;
 
 import java.io.*;
 
@@ -163,6 +163,10 @@ public class Main extends Application {
                 e-> {
                     fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
                     fileChooser.setTitle("Select file to write hashes to");
+                    fileChooser.getExtensionFilters().addAll(
+                            new FileChooser.ExtensionFilter("Checksum file", "*.check"),
+                            new FileChooser.ExtensionFilter("All files", "*.*")
+                    );
                     File file = fileChooser.showSaveDialog(stage);
 
                     if (file != null)
@@ -235,7 +239,7 @@ public class Main extends Application {
                     folderButton.setSelected(false);
                     hashButton.setSelected(false);
                     checkButton.setSelected(false);
-
+                    textArea.setText(readme());
                 }
         );
 
@@ -243,10 +247,19 @@ public class Main extends Application {
                 e -> {
                     if ((fileButton.isSelected() || folderButton.isSelected()) &&
                             (hashButton.isSelected() || checkButton.isSelected())) {
-                        Hash hash = new Hash(new File(fileTextField.getText()), new File(hashTextField.getText()));
-                        hash.scanDirectory();
 
-                        textArea.setText(hash.getOutputString());
+                        if (hashButton.isSelected()) {
+                            Hash hash = new Hash(new File(fileTextField.getText()), new File(hashTextField.getText()));
+                            hash.scanDirectory();
+
+                            textArea.setText(hash.getOutputString());
+                        } else if (checkButton.isSelected()) {
+                            Check check = new Check(new File(fileTextField.getText()), new File(hashTextField.getText()));
+                            check.scanDirectory();
+
+                            textArea.setText(check.getOutputString());
+                        }
+
                     } else {
                         textArea.appendText("\n\nError:");
                     }
@@ -291,7 +304,7 @@ public class Main extends Application {
     private String readme() {
         StringBuilder sb = new StringBuilder();
         sb.append("Manual - Checksum").append(NEW_LINE);
-        sb.append("This is the readme").append(NEW_LINE);
+        sb.append("This is the manual").append(NEW_LINE);
         sb.append("ye").append(NEW_LINE);
         sb.append("lol lol");
         return sb.toString();
