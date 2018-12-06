@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+    id 'idea'
 	id 'application'
 	id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
@@ -13,21 +14,13 @@ dependencies {
 	compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
-}
-
 jar {
     manifest {
-        attributes 'Main-Class': 'no.airahimi.hashing_directories.HashCheck'
+        attributes 'Main-Class': 'no.airahimi.hashing_directories.gui.Main'
     }			
 	exclude ('META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA')
 }
 
-mainClassName = 'no.airahimi.hashing_directories.HashCheck'
+mainClassName = 'no.airahimi.hashing_directories.gui.Main'
 
 

@@ -22,3 +22,8 @@ gradle-app.setting
 /subprojects/*/bin
 atlassian-ide-plugin.xml
 .metadata/
+
+### IDEA ###
+/.idea/
+/out/
+*.iml
